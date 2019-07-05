@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='ponddy-auth',
-    version=os.environ['CIRCLE_TAG'],
+    version=os.environ['VERSION'],
     description='The Ponddy Auth SSO authentication library',
     long_description="""
     Provide the class for the Django restful framework authentication.
