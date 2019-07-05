@@ -7,9 +7,6 @@ parso==0.5.0
 pycodestyle==2.5.0
 pyflakes==2.1.1
 
-# For test
-ponddy-api-test-client==0.0.1
-
 # ipython
 backcall==0.1.0
 decorator==4.4.0
