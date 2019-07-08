@@ -3,6 +3,7 @@ import requests
 from functools import partial
 
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, AnonymousUser
 
@@ -61,11 +62,14 @@ class SSOAuthentication():
                     username=payload['email'],
                     email=payload['email']
                 )
-            api_agent = Group.objects.get(
-                name=API_AGENT_GROUP_NAME_FORMAT.format(
-                    prefix=API_AGENT_PREFIX, api_agent=payload['api']
+            try:
+                api_agent = Group.objects.get(
+                    name=API_AGENT_GROUP_NAME_FORMAT.format(
+                        prefix=API_AGENT_PREFIX, api_agent=payload['api']
+                    )
                 )
-            )
+            except ObjectDoesNotExist:
+                return (None, None)
             attach_permission_functions(api_agent)
             setattr(user, API_AGENT_PROPERTY_NAME, api_agent)
             return (user, payload)
