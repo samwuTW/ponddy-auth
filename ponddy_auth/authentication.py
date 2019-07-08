@@ -10,6 +10,7 @@ from rest_framework.authentication import get_authorization_header
 
 
 User = get_user_model()
+API_AGENT_GROUP_NAME_FORMAT = "{prefix}_{api_agent}"
 API_AGENT_PREFIX = getattr(settings, 'API_AGENT_PREFIX', 'api_agent')
 API_AGENT_PROPERTY_NAME = getattr(
     settings,
@@ -61,7 +62,7 @@ class SSOAuthentication():
                     email=payload['email']
                 )
             api_agent = Group.objects.get(
-                name="{prefix}_{api_agent}".format(
+                name=API_AGENT_GROUP_NAME_FORMAT.format(
                     prefix=API_AGENT_PREFIX, api_agent=payload['api']
                 )
             )
