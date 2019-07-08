@@ -2,16 +2,16 @@ import os
 from setuptools import setup
 
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+
 setup(
     name='ponddy-auth',
     version=os.environ['VERSION'],
     description='The Ponddy Auth SSO authentication library',
-    long_description="""
-    Provide the class for the Django restful framework authentication.
-    Provide the Django model permission class compatible with the restful
-    framework, let it can support valid the permission what in this request
-    contains the API's permission validation.
-    """,
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     classifiers=[
         'Programming Language :: Python :: 3.7',
     ],
