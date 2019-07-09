@@ -1,5 +1,6 @@
 import json
 import requests
+from uuid import UUID
 from functools import partial
 
 from django.conf import settings
@@ -65,10 +66,11 @@ class SSOAuthentication():
             try:
                 api_agent = Group.objects.get(
                     name=API_AGENT_GROUP_NAME_FORMAT.format(
-                        prefix=API_AGENT_PREFIX, api_agent=payload['api']
+                        prefix=API_AGENT_PREFIX,
+                        api_agent=str(UUID(payload['api']))
                     )
                 )
-            except ObjectDoesNotExist:
+            except (ObjectDoesNotExist, ValueError):
                 return (None, None)
             attach_permission_functions(api_agent)
             setattr(user, API_AGENT_PROPERTY_NAME, api_agent)
