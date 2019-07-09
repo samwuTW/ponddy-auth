@@ -37,9 +37,13 @@ The property name what injects into the `request.user` object
 ### Check permission manually
 ```python
 # project/app/views.py
+from rest_framework.decorators import api_view
+
+
+@api_view(['GET'])
 def my_view(request):
    if request.user._api_agent.has_perm('auth.view_users') or \
-      request.user._api_agent.has_perm(['app.perm', 'app.perm']):
+      request.user._api_agent.has_perms(['app.perm', 'app.perm']):
        # do something
        pass
 ```
