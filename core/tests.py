@@ -1,4 +1,5 @@
 import json
+from uuid import uuid4
 from jose import jwt
 
 from unittest import TestCase
@@ -21,7 +22,7 @@ API_AGENT_PREFIX = getattr(settings, 'API_AGENT_PREFIX', 'api_agent')
 
 class SSOAuthenticationTest(TestCase):
     EMAIL = 'abc@abc.xyz'
-    API = 'Ponddy'
+    API = str(uuid4())
     SECRET = 'SECRET'
 
     def get_payload(self):
