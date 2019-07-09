@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='ponddy-auth',
-    version=os.environ['VERSION'],
+    version=os.environ['CIRCLE_TAG'],
     description='The Ponddy Auth SSO authentication library',
     long_description=long_description,
     long_description_content_type="text/markdown",

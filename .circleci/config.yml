@@ -91,12 +91,24 @@ jobs:
           destination: test-reports
 workflows:
   version: 2
-  test-and-deploy:
+  test:
     jobs:
       - build
+
+  test-and-deploy:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
+
       - deploy:
           requires:
             - build
           filters:
             tags:
-              only: /^[0-9](\.[0-9]+)/
+              only: /.*/
+            branches:
+              ignore: /.*/
