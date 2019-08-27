@@ -1,4 +1,5 @@
 import json
+import logging
 import requests
 from uuid import UUID
 from functools import partial
@@ -7,10 +8,11 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, AnonymousUser
-
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.authentication import get_authorization_header
 
 
+logger = logging.getLogger(__file__)
 User = get_user_model()
 API_AGENT_GROUP_NAME_FORMAT = "{prefix}_{api_agent}"
 API_AGENT_PREFIX = getattr(settings, 'API_AGENT_PREFIX', 'api_agent')
@@ -46,6 +48,10 @@ def attach_permission_functions(obj):
 class SSOAuthentication():
     def authenticate(self, request):
         token = get_authorization_header(request)
+
+        if token and token.split()[0] not in (b'SSO', 'SSO'):
+            return None, None
+
         check_token = requests.get(
             settings.AUTH_TOKEN_VALID_URL,
             headers={
@@ -55,6 +61,7 @@ class SSOAuthentication():
                 'status': str(request.META.get('HTTP_STATUS', None))
             }
         )
+        logger.info(f'{check_token.status_code} {check_token.content}')
         if check_token.ok:
             payload = json.loads(check_token.content)
             user = AnonymousUser()
@@ -71,8 +78,8 @@ class SSOAuthentication():
                     )
                 )
             except (ObjectDoesNotExist, ValueError):
-                return (None, None)
+                raise AuthenticationFailed('Group not exists')
             attach_permission_functions(api_agent)
             setattr(user, API_AGENT_PROPERTY_NAME, api_agent)
             return (user, payload)
-        return (None, None)
+        raise AuthenticationFailed()
