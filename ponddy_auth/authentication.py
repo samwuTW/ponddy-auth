@@ -9,7 +9,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, AnonymousUser
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.authentication import get_authorization_header
+from rest_framework.authentication import (
+    get_authorization_header,
+    BaseAuthentication,
+)
 
 
 logger = logging.getLogger(__file__)
@@ -45,12 +48,12 @@ def attach_permission_functions(obj):
         setattr(obj, function.__name__, partial(function, obj))
 
 
-class SSOAuthentication():
+class SSOAuthentication(BaseAuthentication):
+
     def authenticate(self, request):
         token = get_authorization_header(request)
-
-        if token and token.split()[0] not in (b'SSO', 'SSO'):
-            return None, None
+        if not token or token and token.split()[0] not in (b'SSO', 'SSO'):
+            return None
 
         check_token = requests.get(
             settings.AUTH_TOKEN_VALID_URL,
@@ -83,3 +86,6 @@ class SSOAuthentication():
             setattr(user, API_AGENT_PROPERTY_NAME, api_agent)
             return (user, payload)
         raise AuthenticationFailed()
+
+    def authenticate_header(self, request):
+        return '{} realm={}'.format('SSO', 'api')

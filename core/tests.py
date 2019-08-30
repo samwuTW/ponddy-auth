@@ -2,10 +2,10 @@ import json
 from uuid import uuid4
 from jose import jwt
 
-from unittest import TestCase
 from unittest.mock import patch
 
 from django.conf import settings
+from django.test import TestCase
 from django.http import HttpRequest
 from django.shortcuts import reverse
 from django.contrib.auth.models import Group, Permission
@@ -108,4 +108,23 @@ class SSOAuthenticationTest(TestCase):
             content=b''
         )
         resp = self.sso_client.get(reverse('user-list'))
-        self.assertEqual(resp.status_code, 403)
+        self.assertEqual(resp.status_code, 401)
+
+    @patch('ponddy_auth.authentication.requests.get')
+    def test_empty_authentication_token_will_not_raise_error(self, mock_auth):
+        mock_auth.side_effect = lambda *arg, **kwarg: MockAuthHTTPResponse(
+            ok=False,
+            content=b''
+        )
+        resp = self.client.get(reverse('user-list'))
+        self.assertEqual(resp.status_code, 401)
+
+    @patch('ponddy_auth.authentication.requests.get')
+    def test_token_group_not_exists(self, mock_auth):
+        payload = self.get_payload()
+        payload.update({'api': str(uuid4())})
+        mock_auth.side_effect = lambda *arg, **kwargs: MockAuthHTTPResponse(
+            content=json.dumps(payload)
+        )
+        resp = self.sso_client.get(reverse('user-list'))
+        self.assertEqual(resp.status_code, 401)
