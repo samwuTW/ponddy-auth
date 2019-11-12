@@ -28,7 +28,7 @@ The real Auth server URL
  - None default
 ### API_AGENT_PREFIX
 The prefix of API name of group
- - Default: api_agent
+ - Default: api_agent_
 ### API_AGENT_PROPERTY_NAME
 The property name what injects into the `request.user` object
  - Default: _api_agent
