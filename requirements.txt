@@ -1,7 +1,7 @@
 # Django & requests & django rest framework
 certifi==2019.6.16
 chardet==3.0.4
-Django==2.1.11
+Django==2.2.6
 djangorestframework==3.9.4
 idna==2.8
 pytz==2019.1
