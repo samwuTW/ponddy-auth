@@ -66,10 +66,10 @@ class SSOAuthentication(BaseAuthentication):
                     'status': str(request.META.get('HTTP_STATUS', None))
                 }
             )
-        except Exception:
-            pass
-
-        logger.info(f'{check_token.status_code} {check_token.content}')
+        except Exception as e:
+            logger.info(str(e))
+        else:
+            logger.info(f'{check_token.status_code} {check_token.content}')
 
         if check_token and check_token.ok:
             payload = json.loads(check_token.content)
