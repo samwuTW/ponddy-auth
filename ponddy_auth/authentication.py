@@ -55,17 +55,23 @@ class SSOAuthentication(BaseAuthentication):
         if not token or token and token.split()[0] not in (b'SSO', 'SSO'):
             return None
 
-        check_token = requests.get(
-            settings.AUTH_TOKEN_VALID_URL,
-            headers={
-                'authorization': token,
-                'app': request.META.get('HTTP_APP', None),
-                'api': request.META.get('HTTP_API', None),
-                'status': str(request.META.get('HTTP_STATUS', None))
-            }
-        )
+        check_token = None
+        try:
+            check_token = requests.get(
+                settings.AUTH_TOKEN_VALID_URL,
+                headers={
+                    'authorization': token,
+                    'app': request.META.get('HTTP_APP', None),
+                    'api': request.META.get('HTTP_API', None),
+                    'status': str(request.META.get('HTTP_STATUS', None))
+                }
+            )
+        except Exception:
+            pass
+
         logger.info(f'{check_token.status_code} {check_token.content}')
-        if check_token.ok:
+
+        if check_token and check_token.ok:
             payload = json.loads(check_token.content)
             user = AnonymousUser()
             if payload.get('email', False):
