@@ -19,3 +19,19 @@ ptyprocess==0.6.0
 Pygments==2.4.2
 traitlets==4.3.2
 wcwidth==0.1.7
+
+# pyls
+astroid==2.3.3
+autopep8==1.5
+isort==4.3.21
+lazy-object-proxy==1.4.3
+pluggy==0.13.1
+pydocstyle==5.0.2
+pylint==2.4.4
+python-jsonrpc-server==0.3.4
+python-language-server==0.31.7
+rope==0.16.0
+snowballstemmer==2.0.0
+ujson==1.35
+wrapt==1.11.2
+yapf==0.29.0
