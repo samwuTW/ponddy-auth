@@ -75,10 +75,12 @@ class SSOAuthentication(BaseAuthentication):
             payload = json.loads(check_token.content)
             user = AnonymousUser()
             if payload.get('email', False):
-                user, _ = User.objects.get_or_create(
-                    username=payload['email'],
-                    email=payload['email']
-                )
+                user = User.objects.filter(email=payload['email']).first()
+                if not user:
+                    user, _ = User.objects.get_or_create(
+                        username=payload['email'],
+                        email=payload['email']
+                    )
             try:
                 api_agent = Group.objects.get(
                     name=API_AGENT_GROUP_NAME_FORMAT.format(
