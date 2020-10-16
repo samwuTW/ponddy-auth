@@ -20,8 +20,9 @@ SSO_AUTH_HEADER_PREFIX = getattr(settings, "SSO_AUTH_HEADER_PREFIX", "SSO")
 API_AGENT_PREFIX = getattr(settings, 'API_AGENT_PREFIX', 'api_agent')
 
 
-class SSOAuthenticationTest(TestCase):
+class TestAPIMixin:
     EMAIL = 'abc@abc.xyz'
+    APP = 'APP'
     API = str(uuid4())
     SECRET = 'SECRET'
 
@@ -31,7 +32,7 @@ class SSOAuthenticationTest(TestCase):
             'api': self.API
         }
 
-    def setUp(self):
+    def set_up_api(self):
         self.api, _ = Group.objects.get_or_create(
             name="{prefix}_{api_agent}".format(
                 prefix=API_AGENT_PREFIX, api_agent=self.API
@@ -51,6 +52,48 @@ class SSOAuthenticationTest(TestCase):
                 token=self.token
             )
         )
+
+
+class APIClientTest(TestAPIMixin, TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.set_up_api()
+
+    @patch('ponddy_auth.authentication.requests.get')
+    def test_api_client_request_authenticated(self, mock_auth):
+        from ponddy_auth.utils import APIClient
+        client = APIClient(
+            app_name=self.APP,
+            api_client_id=self.API,
+            api_secret=self.SECRET,
+        )
+        mock_auth.side_effect = lambda *arg, **kwargs: MockAuthHTTPResponse(
+            content=json.dumps(client.payload)
+        )
+        request = HttpRequest()
+        request.META = {
+            f'HTTP_{key.upper()}': val
+            for key, val
+            in client.headers.items()
+        }
+        user, payload = SSOAuthentication().authenticate(request)
+        assert user.is_anonymous is True
+        assert hasattr(user, "_api_agent")
+        api_agent = getattr(user, "_api_agent")
+        assert isinstance(api_agent, Group)
+
+        assert hasattr(api_agent, "has_perm")
+        assert hasattr(api_agent, "has_perms")
+
+        assert api_agent.has_perm(self._permission)
+        assert api_agent.has_perms([self._permission, ])
+
+
+class SSOAuthenticationTest(TestAPIMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.set_up_api()
 
     @patch('ponddy_auth.authentication.requests.get')
     def test_sso_auth_will_return_user_if_auth_valid_token(self, mock_auth):
