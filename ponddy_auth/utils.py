@@ -41,7 +41,7 @@ class APIClient(Session):
         self.payload = {
             'api': self.api_client_id,
             'app': self.app_name,
-            'status': self.status,
+            'status': str(self.status),
         }
         self.payload.update(self.payload_patch)
         token = (
@@ -53,7 +53,7 @@ class APIClient(Session):
             'API': self.api_client_id,
             'APP': self.app_name,
             'Authorization': token,
-            'status': self.status,
+            'status': str(self.status),
         }
 
         self.headers.update(headers)
