@@ -1,8 +1,10 @@
 # Ponddy Auth Library
-Provide the class for the Django restful framework authentication, accept the `Auth` token and check the name of <API_AGENT_PREFIX>_<API_ID> in django.contrib.auth.models.Group or not.
+- Provide the class for the Django restful framework authentication, accept the `Auth` token and check the name of <API_AGENT_PREFIX>_<API_ID> in django.contrib.auth.models.Group or not.
 If the group exists then append the API_AGENT_PROPERTY_NAME into `request.user` let you can check either API or user permissions.
 
-Provide the Django model permission class compatible with the restful framework, let it can support valid the permission what in this request contains the API's permission validation.
+- Provide the Django model permission class compatible with the restful framework, let it can support valid the permission what in this request contains the API's permission validation.
+
+- Provide the APIClient, it acts the role of API to execute the HTTP request
 
 ## Usage
 ### Install package
@@ -83,3 +85,20 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [SSODjangoModelPermissions, ]
  ```
+
+## APIClient
+### Settings first
+```python
+# project/settings.py
+PONDDY_AUTH_APP_NAME = 'YOUR APP NAME'
+PONDDY_AUTH_API_CLIENT_ID = 'your-client-id-uuid-like'
+PONDDY_AUTH_API_SECRET = 'y0urSecretKey'
+```
+### Make request
+```python
+from ponddy_auth.utils import APIClient
+session = APIClient()
+url = 'https://some.app'
+data = {'apply': True}
+response = session.post(url, data=data)
+```
