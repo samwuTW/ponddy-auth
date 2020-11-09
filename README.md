@@ -23,15 +23,34 @@ REST_FRAMEWORK = {
 ```
 
 ## Settings
-### AUTH_TOKEN_VALID_URL
+### `AUTH_TOKEN_VALID_URL`
 The real Auth server URL
  - None default
-### API_AGENT_PREFIX
+### `API_AGENT_PREFIX`
 The prefix of API name of group
- - Default: api_agent_
-### API_AGENT_PROPERTY_NAME
+ - Default: `api_agent_`
+### `API_AGENT_PROPERTY_NAME`
 The property name what injects into the `request.user` object
- - Default: _api_agent
+ - Default: `_api_agent`
+### `PONDDY_AUTH_APP_NAME`
+Your APP name
+### `PONDDY_AUTH_API_CLIENT_ID`
+Your client ID
+### `PONDDY_AUTH_API_SECRET`
+Your client secret
+### `PONDDY_AUTH_API_TOKEN_PREFIX`
+The token prefix, default is `SSO`
+
+#### Alias
+If you are already set some variables as another setting variable, you can change those to specify the settled variable name
+### `PONDDY_AUTH_APP_NAME_SETTING_NAME`
+Setting alias of `PONDDY_AUTH_APP_NAME`
+### `PONDDY_AUTH_API_CLIENT_ID_SETTING_NAME`
+Setting alias of `PONDDY_AUTH_API_CLIENT_ID`
+### `PONDDY_AUTH_API_SECRET_SETTING_NAME`
+Setting alias of `PONDDY_AUTH_API_SECRET`
+### `PONDDY_AUTH_API_TOKEN_PREFIX_SETTING_NAME`
+Setting alias of `PONDDY_AUTH_API_TOKEN_PREFIX`
 
 ## Permission
 ### Check permission manually
