@@ -102,3 +102,12 @@ url = 'https://some.app'
 data = {'apply': True}
 response = session.post(url, data=data)
 ```
+### Act as user
+```python
+from ponddy_auth.utils import APIClient
+session = APIClient(payload_patch={'email': 'user@userdomain.com'})
+url = 'https://some.app'
+data = {'apply': True}
+response = session.post(url, data=data)
+
+```
