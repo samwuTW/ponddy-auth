@@ -1,0 +1,8 @@
+-c base.txt
+python-language-server[flake8]
+ipython
+pip
+setuptools
+tqdm
+twine
+wheel
