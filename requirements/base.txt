@@ -4,29 +4,32 @@
 #
 #    pip-compile requirements/base.in
 #
-django==2.2.13
+asgiref==3.3.1
+    # via django
+django==3.1.7
     # via
     #   -r requirements/base.in
+    #   djangorestframework
     #   ponddy-api-test-client
-djangorestframework==3.9.4
+djangorestframework==3.12.2
     # via -r requirements/base.in
 ecdsa==0.14.1
     # via python-jose
-future==0.17.1
-    # via python-jose
 ponddy-api-test-client==0.0.1
     # via -r requirements/base.in
-pyasn1==0.4.5
-    # via rsa
-python-jose==3.0.1
+pyasn1==0.4.8
+    # via
+    #   python-jose
+    #   rsa
+python-jose==3.2.0
     # via -r requirements/base.in
-pytz==2019.1
+pytz==2021.1
     # via django
-rsa==4.0
+rsa==4.7.2
     # via python-jose
-six==1.12.0
+six==1.15.0
     # via
     #   ecdsa
     #   python-jose
-sqlparse==0.3.0
+sqlparse==0.4.1
     # via django
