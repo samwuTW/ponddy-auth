@@ -90,6 +90,8 @@ class SSOAuthentication(BaseAuthentication):
                 )
             except (ObjectDoesNotExist, ValueError):
                 raise AuthenticationFailed('Group not exists')
+            except KeyError:
+                raise AuthenticationFailed('Cannot found API info in the payload')
             attach_permission_functions(api_agent)
             setattr(user, API_AGENT_PROPERTY_NAME, api_agent)
             return (user, payload)
