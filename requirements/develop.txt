@@ -80,6 +80,8 @@ pycodestyle==2.5.0
     # via flake8
 pycparser==2.20
     # via cffi
+pydocstyle==6.0.0
+    # via -r requirements/develop.in
 pyflakes==2.1.1
     # via flake8
 pygments==2.8.1
@@ -113,6 +115,8 @@ six==1.15.0
     #   prompt-toolkit
     #   readme-renderer
     #   traitlets
+snowballstemmer==2.1.0
+    # via pydocstyle
 toml==0.10.2
     # via black
 tqdm==4.59.0
