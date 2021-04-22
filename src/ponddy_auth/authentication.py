@@ -1,41 +1,36 @@
 import json
 import logging
-import requests
-from uuid import UUID
 from functools import partial
+from uuid import UUID
 
+import requests
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group, AnonymousUser
+from django.contrib.auth.models import AnonymousUser, Group
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.authentication import BaseAuthentication, get_authorization_header
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.authentication import (
-    get_authorization_header,
-    BaseAuthentication,
-)
-
 
 logger = logging.getLogger(__file__)
 User = get_user_model()
 API_AGENT_GROUP_NAME_FORMAT = "{prefix}_{api_agent}"
-API_AGENT_PREFIX = getattr(settings, 'API_AGENT_PREFIX', 'api_agent')
-API_AGENT_PROPERTY_NAME = getattr(
-    settings,
-    'API_AGENT_PROPERTY_NAME',
-    '_api_agent'
-)
+API_AGENT_PREFIX = getattr(settings, "API_AGENT_PREFIX", "api_agent")
+API_AGENT_PROPERTY_NAME = getattr(settings, "API_AGENT_PROPERTY_NAME", "_api_agent")
 
 
 def has_perm(self, perm):
     perm_cache_name = "_perm_cache"
     if not hasattr(self, perm_cache_name):
-        setattr(self, perm_cache_name, {
-            "%s.%s" % (ct, name)
-            for ct, name
-            in self.permissions.all().values_list(
-                'content_type__app_label',
-                'codename').order_by()
-        })
+        setattr(
+            self,
+            perm_cache_name,
+            {
+                "%s.%s" % (ct, name)
+                for ct, name in self.permissions.all()
+                .values_list("content_type__app_label", "codename")
+                .order_by()
+            },
+        )
     return perm in getattr(self, perm_cache_name)
 
 
@@ -49,10 +44,9 @@ def attach_permission_functions(obj):
 
 
 class SSOAuthentication(BaseAuthentication):
-
     def authenticate(self, request):
         token = get_authorization_header(request)
-        if not token or token and token.split()[0] not in (b'SSO', 'SSO'):
+        if not token or token and token.split()[0] not in (b"SSO", "SSO"):
             return None
 
         check_token = None
@@ -60,42 +54,40 @@ class SSOAuthentication(BaseAuthentication):
             check_token = requests.get(
                 settings.AUTH_TOKEN_VALID_URL,
                 headers={
-                    'authorization': token,
-                    'app': request.META.get('HTTP_APP', None),
-                    'api': request.META.get('HTTP_API', None),
-                    'status': str(request.META.get('HTTP_STATUS', None))
-                }
+                    "authorization": token,
+                    "app": request.META.get("HTTP_APP", None),
+                    "api": request.META.get("HTTP_API", None),
+                    "status": str(request.META.get("HTTP_STATUS", None)),
+                },
             )
         except Exception as e:
             logger.info(str(e))
         else:
-            logger.info(f'{check_token.status_code} {check_token.content}')
+            logger.info(f"{check_token.status_code} {check_token.content}")
 
         if check_token and check_token.ok:
             payload = json.loads(check_token.content)
             user = AnonymousUser()
-            if payload.get('email', False):
-                user = User.objects.filter(email=payload['email']).first()
+            if payload.get("email", False):
+                user = User.objects.filter(email=payload["email"]).first()
                 if not user:
                     user, _ = User.objects.get_or_create(
-                        username=payload['email'],
-                        email=payload['email']
+                        username=payload["email"], email=payload["email"]
                     )
             try:
                 api_agent = Group.objects.get(
                     name=API_AGENT_GROUP_NAME_FORMAT.format(
-                        prefix=API_AGENT_PREFIX,
-                        api_agent=str(UUID(payload['api']))
+                        prefix=API_AGENT_PREFIX, api_agent=str(UUID(payload["api"]))
                     )
                 )
             except (ObjectDoesNotExist, ValueError):
-                raise AuthenticationFailed('Group not exists')
+                raise AuthenticationFailed("Group not exists")
             except KeyError:
-                raise AuthenticationFailed('Cannot found API info in the payload')
+                raise AuthenticationFailed("Cannot found API info in the payload")
             attach_permission_functions(api_agent)
             setattr(user, API_AGENT_PROPERTY_NAME, api_agent)
             return (user, payload)
         raise AuthenticationFailed()
 
     def authenticate_header(self, request):
-        return '{} realm={}'.format('SSO', 'api')
+        return "{} realm={}".format("SSO", "api")
