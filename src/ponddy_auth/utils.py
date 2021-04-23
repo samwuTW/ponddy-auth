@@ -1,3 +1,5 @@
+import typing
+
 from django.conf import settings
 from django.utils import timezone
 from jose import jwt
@@ -26,7 +28,7 @@ setting_api_token_prefix = getattr(settings, API_TOKEN_PREFIX_SETTING_NAME, "SSO
 
 
 class APIClient(Session):
-    def refresh_api_header(self):
+    def refresh_api_header(self) -> None:
         self.status = timezone.now().timestamp()
         self.payload = {
             "api": self.api_client_id,
@@ -49,11 +51,11 @@ class APIClient(Session):
 
     def __init__(
         self,
-        payload_patch: dict = None,
-        app_name: str = None,
-        api_client_id: str = None,
-        api_secret: str = None,
-        api_token_prefix: str = None,
+        payload_patch: typing.Optional[typing.Dict[str, typing.Any]] = None,
+        app_name: typing.Optional[str] = None,
+        api_client_id: typing.Optional[str] = None,
+        api_secret: typing.Optional[str] = None,
+        api_token_prefix: typing.Optional[str] = None,
     ):
         super().__init__()
         self.app_name = app_name or setting_app_name

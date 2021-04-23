@@ -1,5 +1,7 @@
 from django.conf import settings
 from rest_framework.permissions import DjangoModelPermissions
+from rest_framework.request import Request
+from rest_framework.views import APIView
 
 API_AGENT_PROPERTY_NAME = getattr(settings, "API_AGENT_PROPERTY_NAME", "_api_agent")
 
@@ -15,10 +17,10 @@ class SSODjangoModelPermissions(DjangoModelPermissions):
         "DELETE": ["%(app_label)s.delete_%(model_name)s"],
     }
 
-    def has_permission(self, request, view):
+    def has_permission(self, request: Request, view: APIView) -> bool:
         api_agent = getattr(request.user, API_AGENT_PROPERTY_NAME, None)
         queryset = self._queryset(view)
-        perms = self.get_required_permissions(request.method, queryset.model)
-        return super().has_permission(request, view) or (
-            api_agent and api_agent.has_perms(perms)
-        )
+        perms = None
+        if request.method:
+            perms = self.get_required_permissions(request.method, queryset.model)
+        return super().has_permission(request, view) or (api_agent and api_agent.has_perms(perms))

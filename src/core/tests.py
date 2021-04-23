@@ -29,9 +29,7 @@ class TestAPIMixin:
 
     def set_up_api(self):
         self.api, _ = Group.objects.get_or_create(
-            name="{prefix}_{api_agent}".format(
-                prefix=API_AGENT_PREFIX, api_agent=self.API
-            )
+            name="{prefix}_{api_agent}".format(prefix=API_AGENT_PREFIX, api_agent=self.API)
         )
         self._permission = "auth.view_user"
         self._perm_app_label, self._perm_codename = "auth.view_user".split(".")
@@ -42,9 +40,7 @@ class TestAPIMixin:
         self.api.permissions.add(self.permission)
         self.token = jwt.encode(self.get_payload(), self.SECRET)
         self.sso_client = SSOClient(
-            token="{prefix} {token}".format(
-                prefix=SSO_AUTH_HEADER_PREFIX, token=self.token
-            )
+            token="{prefix} {token}".format(prefix=SSO_AUTH_HEADER_PREFIX, token=self.token)
         )
 
 
@@ -66,9 +62,7 @@ class APIClientTest(TestAPIMixin, TestCase):
             content=json.dumps(client.payload)
         )
         request = HttpRequest()
-        request.META = {
-            f"HTTP_{key.upper()}": val for key, val in client.headers.items()
-        }
+        request.META = {f"HTTP_{key.upper()}": val for key, val in client.headers.items()}
         user, payload = SSOAuthentication().authenticate(request)
         assert user.is_anonymous is True
         assert hasattr(user, "_api_agent")
@@ -139,17 +133,13 @@ class SSOAuthenticationTest(TestAPIMixin, TestCase):
 
     @patch("ponddy_auth.authentication.requests.get")
     def test_invalid_sso_cannot_do_anything(self, mock_auth):
-        mock_auth.side_effect = lambda *arg, **kwargs: MockAuthHTTPResponse(
-            ok=False, content=b""
-        )
+        mock_auth.side_effect = lambda *arg, **kwargs: MockAuthHTTPResponse(ok=False, content=b"")
         resp = self.sso_client.get(reverse("user-list"))
         self.assertEqual(resp.status_code, 401)
 
     @patch("ponddy_auth.authentication.requests.get")
     def test_empty_authentication_token_will_not_raise_error(self, mock_auth):
-        mock_auth.side_effect = lambda *arg, **kwarg: MockAuthHTTPResponse(
-            ok=False, content=b""
-        )
+        mock_auth.side_effect = lambda *arg, **kwarg: MockAuthHTTPResponse(ok=False, content=b"")
         resp = self.client.get(reverse("user-list"))
         self.assertEqual(resp.status_code, 401)
 

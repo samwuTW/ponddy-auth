@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import typing
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,7 +25,7 @@ SECRET_KEY = "txh!$h!0mrkj7k@j@l(61e48p@55k)@jys4+ni*)+=fol!p9*g"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS: typing.List[str] = []
 
 
 # Application definition

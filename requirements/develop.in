@@ -9,3 +9,6 @@ wheel
 black
 isort
 pydocstyle
+mypy
+django-stubs
+djangorestframework-stubs
