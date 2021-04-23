@@ -12,3 +12,5 @@ pydocstyle
 mypy
 django-stubs
 djangorestframework-stubs
+pytest
+pytest-django

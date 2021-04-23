@@ -72,7 +72,7 @@ class SSOAuthentication:
             logger.info(f"{check_token.status_code} {check_token.text}")
 
         if check_token and check_token.ok:
-            payload = json.loads(check_token.content)
+            payload = json.loads(check_token.text)
             user: typing.Optional[UserType] = AnonymousUser()
             if payload.get("email", False):
                 user = User.objects.filter(email=payload["email"]).first()
