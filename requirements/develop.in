@@ -14,3 +14,4 @@ django-stubs
 djangorestframework-stubs
 pytest
 pytest-django
+pytest-cov
