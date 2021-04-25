@@ -15,3 +15,5 @@ djangorestframework-stubs
 pytest
 pytest-django
 pytest-cov
+tox
+tox-pyenv
