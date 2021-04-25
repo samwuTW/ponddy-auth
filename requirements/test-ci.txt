@@ -1,0 +1,6 @@
+python-jose
+ponddy-api-test-client
+pytest
+pytest-django
+pytest-cov
+tox

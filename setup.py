@@ -21,8 +21,9 @@ setup(
     author_email='lambda@lambda.tw',
     license='MIT',
     packages=['ponddy_auth'],
+    package_dir={'': 'src'},
     install_requires=[
-        'Django', 'djangorestframework', 'python-jose'
+        'Django', 'djangorestframework', 'python-jose', 'requests',
     ],
     zip_safe=False
 )
