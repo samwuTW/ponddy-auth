@@ -134,8 +134,7 @@ jobs:
           name: run build wheel & delopy
           command: |
             . venv/bin/activate
-            python setup.py bdist_wheel
-            python -m twine upload dist/*
+            make pypi
 
       - store_artifacts:
           path: test-reports

@@ -64,6 +64,11 @@ push:  ## Push code with tags
 	git push && git push --tags
 .PHONY: push
 
+pypi:
+	python setup.py bdist_wheel
+	python -m twine upload dist/*
+.PHONY: pypi
+
 .DEFAULT_GOAL := help
 help: Makefile
 	@grep -E '(^[a-zA-Z_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
