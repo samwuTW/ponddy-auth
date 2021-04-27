@@ -123,7 +123,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install -r requirements/deploy.txt
+            pip3 install -r requirements/deploy.txt
 
       - save_cache:
           paths:
