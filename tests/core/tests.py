@@ -34,8 +34,7 @@ class TestAPIMixin:
         self._permission = "auth.view_user"
         self._perm_app_label, self._perm_codename = "auth.view_user".split(".")
         self.permission = Permission.objects.get(
-            codename=self._perm_codename,
-            content_type__app_label=self._perm_app_label,
+            codename=self._perm_codename, content_type__app_label=self._perm_app_label
         )
         self.api.permissions.add(self.permission)
         self.token = jwt.encode(self.get_payload(), self.SECRET)
@@ -53,11 +52,7 @@ class APIClientTest(TestAPIMixin, TestCase):
     def test_api_client_request_authenticated(self, mock_auth):
         from ponddy_auth.utils import APIClient
 
-        client = APIClient(
-            app_name=self.APP,
-            api_client_id=self.API,
-            api_secret=self.SECRET,
-        )
+        client = APIClient(app_name=self.APP, api_client_id=self.API, api_secret=self.SECRET)
         mock_auth.side_effect = lambda *arg, **kwargs: MockAuthHTTPResponse(
             content=json.dumps(client.payload)
         )
@@ -73,11 +68,7 @@ class APIClientTest(TestAPIMixin, TestCase):
         assert hasattr(api_agent, "has_perms")
 
         assert api_agent.has_perm(self._permission)
-        assert api_agent.has_perms(
-            [
-                self._permission,
-            ]
-        )
+        assert api_agent.has_perms([self._permission])
 
 
 class SSOAuthenticationTest(TestAPIMixin, TestCase):
@@ -105,11 +96,7 @@ class SSOAuthenticationTest(TestAPIMixin, TestCase):
         assert hasattr(api_agent, "has_perms")
 
         assert api_agent.has_perm(self._permission)
-        assert api_agent.has_perms(
-            [
-                self._permission,
-            ]
-        )
+        assert api_agent.has_perms([self._permission])
 
     @patch("ponddy_auth.authentication.requests.get")
     def test_valid_sso_can_list_users(self, mock_auth):
@@ -125,8 +112,7 @@ class SSOAuthenticationTest(TestAPIMixin, TestCase):
             content=json.dumps(self.get_payload())
         )
         resp = self.sso_client.post(
-            reverse("user-list"),
-            json.dumps({"username": "newuser", "password": "TheA11newPWD"}),
+            reverse("user-list"), json.dumps({"username": "newuser", "password": "TheA11newPWD"})
         )
         self.assertEqual(resp.status_code, 403)
         self.assertNotEqual(resp.status_code, 200)
@@ -139,9 +125,9 @@ class SSOAuthenticationTest(TestAPIMixin, TestCase):
 
     @patch("ponddy_auth.authentication.requests.get")
     def test_empty_authentication_token_will_not_raise_error(self, mock_auth):
-        mock_auth.side_effect = lambda *arg, **kwarg: MockAuthHTTPResponse(ok=False, content=b"")
+        mock_auth.side_effect = lambda *arg, **kwargs: MockAuthHTTPResponse(ok=False, content=b"")
         resp = self.client.get(reverse("user-list"))
-        self.assertEqual(resp.status_code, 401)
+        self.assertEqual(resp.status_code, 403)
 
     @patch("ponddy_auth.authentication.requests.get")
     def test_token_group_not_exists(self, mock_auth):
