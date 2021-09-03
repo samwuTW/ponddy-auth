@@ -53,7 +53,7 @@ class SSOAuthentication:
     ) -> typing.Optional[typing.Tuple[typing.Optional[UserType], typing.Any]]:
         token: bytes = get_authorization_header(request)
         if not token or token and token.split()[0] not in (b"SSO", "SSO"):
-            return None
+            return (None, None)
 
         check_token = None
         try:
