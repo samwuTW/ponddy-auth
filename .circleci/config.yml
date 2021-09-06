@@ -123,7 +123,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip3 install -U setuptools-rust
+            pip3 install -U setuptools-rust pip
             pip3 install -r requirements/deploy.txt
 
       - save_cache:
