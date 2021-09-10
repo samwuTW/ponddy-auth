@@ -8,21 +8,21 @@ asgiref==3.3.1
     # via django
 django==3.1.7
     # via
-    #   -r requirements/base.in
+    #   -r base.in
     #   djangorestframework
     #   ponddy-api-test-client
 djangorestframework==3.12.2
-    # via -r requirements/base.in
+    # via -r base.in
 ecdsa==0.14.1
     # via python-jose
 ponddy-api-test-client==0.0.1
-    # via -r requirements/base.in
+    # via -r base.in
 pyasn1==0.4.8
     # via
     #   python-jose
     #   rsa
 python-jose==3.2.0
-    # via -r requirements/base.in
+    # via -r base.in
 pytz==2021.1
     # via django
 rsa==4.7.2
@@ -31,5 +31,5 @@ six==1.15.0
     # via
     #   ecdsa
     #   python-jose
-sqlparse==0.4.1
+sqlparse==0.4.2
     # via django
